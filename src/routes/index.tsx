@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { Gift, Sparkles, Clock, XCircle, Frown, ArrowRight, Loader2 } from "lucide-react";
+import { Gift, Sparkles, Clock, XCircle, Frown, ArrowRight, Loader2, Camera } from "lucide-react";
 import { checkCode } from "@/lib/draw.functions";
 import { Shell, PRIZE_LABEL } from "@/components/Shell";
 import { GrandPrizeCard } from "@/components/GrandPrizeCard";
+import { CodeScanner } from "@/components/CodeScanner";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -27,17 +29,37 @@ function Index() {
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [res, setRes] = useState<Result | null>(null);
+  const [scanning, setScanning] = useState(false);
+  const [error, setError] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+  const checkingRef = useRef(false);
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!code.trim()) return;
+  async function checkValue(value: string) {
+    const normalized = value.trim().toUpperCase();
+    if (!normalized || checkingRef.current) return;
+    checkingRef.current = true;
     setLoading(true);
     setRes(null);
+    setError("");
     try {
-      setRes(await check({ data: { code } }));
+      setRes(await check({ data: { code: normalized } }));
+    } catch {
+      setError("Hasil belum bisa diperiksa. Silakan coba lagi.");
     } finally {
+      checkingRef.current = false;
       setLoading(false);
     }
+  }
+
+  function submit(e: React.FormEvent) {
+    e.preventDefault();
+    void checkValue(code);
+  }
+
+  function onScan(value: string) {
+    setCode(value);
+    setScanning(false);
+    void checkValue(value);
   }
 
   return (
@@ -59,22 +81,33 @@ function Index() {
       </section>
 
       <form onSubmit={submit} className="mt-8 rounded-3xl border border-border bg-card p-4 shadow-glow">
-        <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Kode Unik</label>
+        <label htmlFor="public-code" className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Kode Unik</label>
+        <div className="mt-2 flex items-center gap-2">
         <input
+          id="public-code"
+          ref={inputRef}
           value={code}
           onChange={(e) => setCode(e.target.value.toUpperCase())}
-          placeholder="CONTOH: AB12CD"
-          className="mt-2 w-full rounded-2xl border border-input bg-background px-4 py-4 text-center text-xl font-bold tracking-[0.25em] outline-none placeholder:text-sm placeholder:tracking-widest placeholder:text-muted-foreground focus:border-primary"
+          placeholder="WL12345678"
+          autoCapitalize="characters"
+          autoCorrect="off"
+          spellCheck={false}
+          className="h-14 min-w-0 flex-1 rounded-2xl border border-input bg-background px-3 text-center text-lg font-bold outline-none placeholder:text-sm placeholder:text-muted-foreground focus:border-primary"
         />
-        <button
+        <Button type="button" size="icon" title="Scan kode kamera atau foto" aria-label="Scan kode kamera atau foto" disabled={loading} className="h-14 w-14 shrink-0 rounded-2xl" onClick={() => setScanning(true)}><Camera className="h-5 w-5" /></Button>
+        </div>
+        <Button
+          type="submit"
           disabled={loading}
-          className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-4 font-bold text-primary-foreground transition active:scale-[0.98] disabled:opacity-60"
+          className="mt-3 h-14 w-full rounded-2xl font-bold"
         >
           {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <>Cek Sekarang <ArrowRight className="h-5 w-5" /></>}
-        </button>
+        </Button>
+        {error && <p role="alert" className="mt-3 text-sm text-destructive">{error}</p>}
       </form>
 
       {res && <ResultCard res={res} />}
+      {scanning && <CodeScanner onScan={onScan} onClose={() => { setScanning(false); requestAnimationFrame(() => inputRef.current?.focus()); }} />}
 
     </Shell>
   );
