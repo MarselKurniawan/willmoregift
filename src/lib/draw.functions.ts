@@ -98,8 +98,8 @@ export const adminDraw = createServerFn({ method: "POST" })
     const { data: codes } = await db.from("codes").select("code").eq("day_number", data.day);
     const list = (codes ?? []).map((c) => c.code);
     for (let i = list.length - 1; i > 0; i--) {
-      const j = crypto.getRandomValues(new Uint32Array(1))[0] % (i + 1);
-      [list[i], list[j]] = [list[j], list[i]];
+      const j = crypto.getRandomValues(new Uint32Array(1))[0]! % (i + 1);
+      [list[i], list[j]] = [list[j]!, list[i]!];
     }
     const pool = [
       ...Array(PRIZES.cash).fill("cash"),
