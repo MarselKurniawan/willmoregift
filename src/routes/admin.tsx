@@ -136,7 +136,7 @@ function Dashboard({ pass, onLogout }: { pass: string; onLogout: () => void }) {
       </section>
 
       <section className="mt-4 rounded-3xl bg-primary p-4 text-primary-foreground">
-        <p className="text-sm font-semibold">Undian Hari {day}: 1× Rp50rb · 5× Goody Bag · 4× Merch · sisanya Zonk</p>
+        <p className="text-sm font-semibold">Undian Hari {day}: 1× Rp50rb · 5× Goodie Bag · 4× Merch · sisanya Zonk</p>
         {d.drawn_at ? (
           <button disabled={busy} onClick={() => confirm("Reset hasil undian hari ini?") && run(() => draw({ data: { pass, day, reset: true } }))}
             className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-background py-3 font-bold text-foreground"><RotateCcw className="h-4 w-4" /> Reset Undian</button>
