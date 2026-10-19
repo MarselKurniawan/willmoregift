@@ -3,15 +3,17 @@ import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { Gift, Sparkles, Clock, XCircle, Frown, ArrowRight, Loader2 } from "lucide-react";
 import { checkCode } from "@/lib/draw.functions";
-import { Shell, PRIZE_LABEL, formatDate } from "@/components/Shell";
+import { Shell, PRIZE_LABEL } from "@/components/Shell";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Cek Kode Unik — Lucky Draw" },
+      { title: "Cek Kode Unik — Willmore Gift" },
       { name: "description", content: "Masukkan kode unikmu dan lihat hadiah apa yang kamu dapatkan." },
-      { property: "og:title", content: "Cek Kode Unik — Lucky Draw" },
+      { property: "og:title", content: "Cek Kode Unik — Willmore Gift" },
       { property: "og:description", content: "Masukkan kode unikmu dan lihat hadiah apa yang kamu dapatkan." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: Index,
@@ -44,7 +46,7 @@ function Index() {
           <span className="grid h-8 w-8 place-items-center rounded-full bg-primary text-primary-foreground">
             <Sparkles className="h-4 w-4" />
           </span>
-          LUCKY<span className="text-primary">DRAW</span>
+          Willmore<span className="text-primary">Gift</span>
         </div>
         <span className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">4 Hari · 40 Hadiah</span>
       </header>
@@ -77,20 +79,6 @@ function Index() {
 
       {res && <ResultCard res={res} />}
 
-      <section className="mt-10 grid grid-cols-3 gap-3">
-        {[
-          ["1", "Rp50rb", "/hari"],
-          ["5", "Goody Bag", "/hari"],
-          ["4", "Merch", "/hari"],
-        ].map(([n, l, s]) => (
-          <div key={l} className="rounded-2xl border border-border bg-card p-3">
-            <div className="text-3xl font-extrabold text-primary">{n}</div>
-            <div className="mt-1 text-sm font-semibold">{l}</div>
-            <div className="text-xs text-muted-foreground">pemenang{s}</div>
-          </div>
-        ))}
-      </section>
-
       <footer className="mt-12 text-center text-xs text-muted-foreground">
         <Link to="/admin" className="hover:text-primary">Admin</Link>
       </footer>
@@ -108,8 +96,8 @@ function ResultCard({ res }: { res: Result }) {
       <Card
         icon={<Clock className="h-7 w-7" />}
         tone="muted"
-        title="Hasil belum diumumkan"
-        text={`Kode kamu terdaftar di undian Hari ${res.day}. Hasil berlaku & bisa dicek mulai ${formatDate(res.announceDate!)}.`}
+        title="Kode terdaftar"
+        text={`Kode kamu terdaftar di undian Hari ${res.day}. Undian belum dilakukan.`}
       />
     );
   if (res.status === "zonk")
@@ -118,8 +106,8 @@ function ResultCard({ res }: { res: Result }) {
     <div className="mt-6 animate-in zoom-in-95 fade-in rounded-3xl bg-primary p-6 text-primary-foreground shadow-glow">
       <Gift className="h-10 w-10" />
       <p className="mt-4 text-sm font-semibold uppercase tracking-widest">Selamat! Kamu dapat</p>
-      <h2 className="mt-1 text-3xl font-extrabold">{PRIZE_LABEL[res.prize!]}</h2>
-      <p className="mt-3 text-sm opacity-80">Undian Hari {res.day} · {formatDate(res.announceDate!)}. Simpan kode ini untuk klaim hadiah.</p>
+      <h2 className="mt-1 text-3xl font-extrabold">{PRIZE_LABEL[res.prize ?? ""]}</h2>
+      <p className="mt-3 text-sm opacity-80">Undian Hari {res.day}. Simpan kode ini untuk klaim hadiah.</p>
     </div>
   );
 }

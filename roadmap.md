@@ -1,0 +1,5 @@
+- [x] Import the supplied 160 WL codes, 40 per day.
+- [x] Add repeatable admin fill button and retain editable announcement dates.
+- [x] Test code allocation and verify admin fill and public check.
+- [x] Allow checking drawn results anytime, regardless of announcement date.
+- [x] Rename public branding to Willmore Gift and remove public prize breakdown.
