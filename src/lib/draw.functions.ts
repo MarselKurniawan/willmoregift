@@ -1,9 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { DEFAULT_DRAW_DAYS, WL_CODE_ROWS } from "@/lib/wl-codes";
 import { getCodeResult } from "@/lib/draw-result";
+import { allocatePrizes, GRAND_PRIZE_CODE } from "@/lib/draw-allocation";
 
 const ADMIN_CODES = ["willmore", "aaaa"];
-export const PRIZES = { cash: 1, goodybag: 5, merch: 4 } as const;
 
 function assertAdmin(pass: string) {
   if (!ADMIN_CODES.includes((pass ?? "").trim().toLowerCase())) throw new Error("Kode admin salah");
@@ -77,7 +77,9 @@ export const adminDeleteCode = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     assertAdmin(data.pass);
     const db = await admin();
-    await db.from("codes").delete().eq("code", data.code);
+    if (norm(data.code) === GRAND_PRIZE_CODE) throw new Error("Kode hadiah utama terkunci dan tidak dapat dihapus.");
+    const { error } = await db.from("codes").delete().eq("code", norm(data.code));
+    if (error) throw new Error("Gagal menghapus kode.");
     return { ok: true };
   });
 
@@ -97,29 +99,23 @@ export const adminDraw = createServerFn({ method: "POST" })
     assertAdmin(data.pass);
     const db = await admin();
     if (data.reset) {
-      await db.from("codes").update({ prize: null }).eq("day_number", data.day);
-      await db.from("draw_days").update({ drawn_at: null }).eq("day_number", data.day);
+      const { error } = await db.from("codes").update({ prize: null }).eq("day_number", data.day).neq("code", GRAND_PRIZE_CODE);
+      if (error) throw new Error("Gagal mereset undian.");
+      const { error: dayError } = await db.from("draw_days").update({ drawn_at: null }).eq("day_number", data.day);
+      if (dayError) throw new Error("Gagal mereset hari undian.");
       return { ok: true };
     }
-    const { data: codes } = await db.from("codes").select("code").eq("day_number", data.day);
-    const list = (codes ?? []).map((c) => c.code);
-    for (let i = list.length - 1; i > 0; i--) {
-      const j = crypto.getRandomValues(new Uint32Array(1))[0]! % (i + 1);
-      [list[i], list[j]] = [list[j]!, list[i]!];
-    }
-    const pool = [
-      ...Array(PRIZES.cash).fill("cash"),
-      ...Array(PRIZES.goodybag).fill("goodybag"),
-      ...Array(PRIZES.merch).fill("merch"),
-    ];
-    const groups: Record<string, string[]> = {};
-    list.forEach((code, i) => {
-      const p = pool[i] ?? "zonk";
-      (groups[p] ??= []).push(code);
+    const { data: codes, error: readError } = await db.from("codes").select("code").eq("day_number", data.day);
+    if (readError) throw new Error("Gagal membaca kode undian.");
+    const groups = allocatePrizes((codes ?? []).map((c) => c.code), (size) => {
+      const value = crypto.getRandomValues(new Uint32Array(1))[0];
+      return (value ?? 0) % size;
     });
     for (const [prize, cs] of Object.entries(groups)) {
-      await db.from("codes").update({ prize }).in("code", cs);
+      const { error } = await db.from("codes").update({ prize }).in("code", cs);
+      if (error) throw new Error("Gagal menyimpan hasil undian.");
     }
-    await db.from("draw_days").update({ drawn_at: new Date().toISOString() }).eq("day_number", data.day);
+    const { error: dayError } = await db.from("draw_days").update({ drawn_at: new Date().toISOString() }).eq("day_number", data.day);
+    if (dayError) throw new Error("Gagal menyimpan status undian.");
     return { ok: true };
   });
