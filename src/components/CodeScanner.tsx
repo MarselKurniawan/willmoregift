@@ -84,7 +84,8 @@ export function CodeScanner({ onScan, onClose }: { onScan: (code: string) => voi
       const result = await worker.recognize(source);
       if (!activeRef.current) return;
       const found = extractPrintedCodes(result.data.text);
-      if (found.length === 1) onScan(found[0]);
+      const first = found[0];
+      if (found.length === 1 && first) onScan(first);
       else if (found.length > 1) setMatches(found);
       else setError("Kode WL + 8 angka belum terbaca. Dekatkan kartu dan pastikan teks terang serta tidak buram.");
     } catch {
