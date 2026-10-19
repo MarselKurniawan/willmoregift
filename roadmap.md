@@ -7,3 +7,4 @@
 - [x] Add exclusive grand-prize celebration and verify the real code result and locking rules.
 - [x] Remove public header badges and Admin footer link.
 - [x] Add admin all-day code search and camera QR/barcode scanning, then verify results and camera states.
+- [x] Replace barcode scanning with printed-text OCR from camera/photos; verify supplied JPG reads WL95534656 and displays day/prize status through both upload and simulated camera.

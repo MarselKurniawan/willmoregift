@@ -13,4 +13,4 @@
 - The repeatable WL import uses the canonical client-safe code dataset and server-side upserts without prize or existing announcement-date fields, so refilling preserves draw outcomes and promo scheduling.
 - Public result classification is a pure helper shared by the server checker and rule tests, so visibility changes are tested without database access.
 - Permanent prize protection uses a database trigger plus server-side allocation exclusions; reset, refill and deletion must preserve locked winners. Prize allocation remains a pure tested helper.
-- Admin lookup filters the authenticated overview across every day without exposing new public reads; camera decoding dynamically loads ZXing after mount and stops media tracks on success, close and errors.
+- Admin lookup filters the authenticated overview across every day without exposing new public reads; printed-code OCR lazily loads a browser-only Tesseract worker on capture/upload, validates matches with the tested pure extractor, and releases workers/media on close or success to keep photos local and avoid SSR overhead.
