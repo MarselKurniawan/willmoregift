@@ -5,6 +5,7 @@ import { Lock, Shuffle, RotateCcw, Trash2, LogOut, Loader2, ListPlus } from "luc
 import { adminLogin, adminOverview, adminAddCodes, adminDeleteCode, adminSetDate, adminDraw, adminFillWLCodes } from "@/lib/draw.functions";
 import { Shell, PRIZE_LABEL } from "@/components/Shell";
 import { Button } from "@/components/ui/button";
+import { AdminCodeSearch } from "@/components/AdminCodeSearch";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -103,6 +104,8 @@ function Dashboard({ pass, onLogout }: { pass: string; onLogout: () => void }) {
       </Button>
       {notice && <p role="status" className="mt-2 text-sm text-primary">{notice}</p>}
       {error && <p role="alert" className="mt-2 text-sm text-destructive">{error}</p>}
+
+      <AdminCodeSearch codes={data.codes} days={data.days} />
 
       <div className="mt-6 grid grid-cols-4 gap-2">
         {data.days.map((x) => {
