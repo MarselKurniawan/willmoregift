@@ -89,7 +89,7 @@ function Dashboard({ pass, onLogout }: { pass: string; onLogout: () => void }) {
   return (
     <Shell>
       <header className="flex items-center justify-between">
-        <h1 className="text-2xl font-extrabold">Dashboard<span className="text-primary">.</span></h1>
+        <h1 className="text-2xl font-extrabold">Willmore <span className="text-primary">Gift</span></h1>
         <button onClick={onLogout} className="flex items-center gap-1 text-sm text-muted-foreground"><LogOut className="h-4 w-4" /> Keluar</button>
       </header>
       <p className="mt-1 text-sm text-muted-foreground">Total kode: <b className="text-foreground">{data.codes.length}</b> / 160</p>
