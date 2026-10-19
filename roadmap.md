@@ -5,5 +5,5 @@
 - [x] Rename public branding to Willmore Gift and remove public prize breakdown.
 - [x] Set and protect WL95534656 as the permanent PINTU HQ 1783 winner.
 - [x] Add exclusive grand-prize celebration and verify the real code result and locking rules.
-- [ ] Remove public header badges and Admin footer link.
-- [ ] Add admin all-day code search and camera QR/barcode scanning, then verify results and camera states.
+- [x] Remove public header badges and Admin footer link.
+- [x] Add admin all-day code search and camera QR/barcode scanning, then verify results and camera states.
