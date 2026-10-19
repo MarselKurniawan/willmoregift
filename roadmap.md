@@ -3,3 +3,5 @@
 - [x] Test code allocation and verify admin fill and public check.
 - [x] Allow checking drawn results anytime, regardless of announcement date.
 - [x] Rename public branding to Willmore Gift and remove public prize breakdown.
+- [ ] Set and protect WL95534656 as the permanent PINTU HQ 1783 winner.
+- [ ] Add exclusive grand-prize celebration and verify the real code result and locking rules.
