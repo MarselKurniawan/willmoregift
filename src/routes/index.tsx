@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Gift, Sparkles, Clock, XCircle, Frown, ArrowRight, Loader2 } from "lucide-react";
 import { checkCode } from "@/lib/draw.functions";
 import { Shell, PRIZE_LABEL } from "@/components/Shell";
+import { GrandPrizeCard } from "@/components/GrandPrizeCard";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -87,6 +88,7 @@ function Index() {
 }
 
 function ResultCard({ res }: { res: Result }) {
+  if (res.status === "win" && res.prize === "pintu_hq") return <GrandPrizeCard />;
   if (res.status === "invalid")
     return (
       <Card icon={<XCircle className="h-7 w-7" />} tone="muted" title="Kode tidak ditemukan" text="Periksa kembali kode unikmu ya." />

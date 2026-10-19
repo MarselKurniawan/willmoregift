@@ -83,7 +83,7 @@ function Dashboard({ pass, onLogout }: { pass: string; onLogout: () => void }) {
   const d = data.days.find((x) => x.day_number === day);
   if (!d) return <Shell><p>Hari undian belum tersedia.</p></Shell>;
   const codes = data.codes.filter((c) => c.day_number === day);
-  const order = ["cash", "goodybag", "merch", "zonk"];
+  const order = ["pintu_hq", "cash", "goodybag", "merch", "zonk"];
   const sorted = d.drawn_at ? [...codes].sort((a, b) => order.indexOf(a.prize ?? "zonk") - order.indexOf(b.prize ?? "zonk")) : codes;
 
   return (
@@ -156,7 +156,7 @@ function Dashboard({ pass, onLogout }: { pass: string; onLogout: () => void }) {
                   {PRIZE_LABEL[c.prize]}
                 </span>
               )}
-              {!d.drawn_at && (
+              {!d.drawn_at && c.code !== "WL95534656" && (
                 <button onClick={() => run(() => del({ data: { pass, code: c.code } }))} className="text-muted-foreground hover:text-destructive"><Trash2 className="h-4 w-4" /></button>
               )}
             </div>
