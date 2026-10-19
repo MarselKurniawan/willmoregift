@@ -2,6 +2,11 @@ import { describe, expect, it } from "vitest";
 import { getCodeResult } from "@/lib/draw-result";
 
 describe("Anytime code checking", () => {
+  it("shows WL95534656 as PINTU HQ 1783 immediately even before its day is drawn or after reset", () => {
+    expect(getCodeResult({ code: "WL95534656", prize: "pintu_hq", day_number: 4, draw_days: {
+      announce_date: "2099-10-23", drawn_at: null,
+    } })).toEqual({ status: "win", prize: "pintu_hq", day: 4 });
+  });
   it("shows a winning result even with a future announcement date", () => {
     expect(getCodeResult({ prize: "merch", day_number: 1, draw_days: {
       announce_date: "2099-10-20", drawn_at: "2026-10-19T00:00:00Z",

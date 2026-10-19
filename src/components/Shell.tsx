@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 export const PRIZE_LABEL: Record<string, string> = {
+  pintu_hq: "PINTU HQ 1783",
   cash: "Saldo Rp50.000",
   goodybag: "Goody Bag Eksklusif",
   merch: "Official Merch",
