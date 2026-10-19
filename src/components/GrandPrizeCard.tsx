@@ -14,7 +14,7 @@ export function GrandPrizeCard() {
           <span className="grand-intro">KAMU MEMENANGKAN HADIAH UTAMA:</span>
           <span className="grand-name">PINTU HQ<br />1783</span>
         </h2>
-        <div className="grand-divider"><span /><Trophy className="h-5 w-5" /><span /></div>
+        <div className="grand-divider"><span /><Trophy className="h-5 w-5" fill="currentColor" /><span /></div>
         <p className="grand-code">WL95534656</p>
         <p className="mt-2 text-sm text-muted-foreground">Simpan kode ini untuk klaim hadiah spesialmu.</p>
       </div>
