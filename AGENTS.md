@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Lucky draw data is accessed only via server functions in src/lib/draw.functions.ts using the admin client; tables have RLS with no policies so the browser cannot read prizes directly.
