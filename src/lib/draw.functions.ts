@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { DEFAULT_DRAW_DAYS, WL_CODE_ROWS } from "@/lib/wl-codes";
 
 const ADMIN_CODES = ["willmore", "aaaa"];
 export const PRIZES = { cash: 1, goodybag: 5, merch: 4 } as const;
@@ -67,6 +68,21 @@ export const adminAddCodes = createServerFn({ method: "POST" })
     return { added: count ?? list.length };
   });
 
+export const adminFillWLCodes = createServerFn({ method: "POST" })
+  .inputValidator((d: { pass: string }) => ({ pass: String(d.pass ?? "") }))
+  .handler(async ({ data }) => {
+    assertAdmin(data.pass);
+    const db = await admin();
+    const { error: dayError } = await db.from("draw_days").upsert(DEFAULT_DRAW_DAYS, {
+      onConflict: "day_number", ignoreDuplicates: true,
+    });
+    if (dayError) throw new Error("Gagal menyiapkan hari undian.");
+    // Only send code and day: existing prizes and announcement dates stay intact.
+    const { error } = await db.from("codes").upsert(WL_CODE_ROWS, { onConflict: "code" });
+    if (error) throw new Error("Gagal mengisi kode WL. Silakan coba lagi.");
+    return { total: WL_CODE_ROWS.length };
+  });
+
 export const adminDeleteCode = createServerFn({ method: "POST" })
   .inputValidator((d: { pass: string; code: string }) => d)
   .handler(async ({ data }) => {
@@ -81,7 +97,8 @@ export const adminSetDate = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     assertAdmin(data.pass);
     const db = await admin();
-    await db.from("draw_days").update({ announce_date: data.date }).eq("day_number", data.day);
+    const { error } = await db.from("draw_days").update({ announce_date: data.date }).eq("day_number", data.day);
+    if (error) throw new Error("Gagal menyimpan tanggal pengumuman.");
     return { ok: true };
   });
 

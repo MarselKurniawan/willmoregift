@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Lucky draw data is accessed only via server functions in src/lib/draw.functions.ts using the admin client; tables have RLS with no policies so the browser cannot read prizes directly.
+- The repeatable WL import uses the canonical client-safe code dataset and server-side upserts without prize or existing announcement-date fields, so refilling preserves draw outcomes and promo scheduling.

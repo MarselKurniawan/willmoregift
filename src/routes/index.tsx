@@ -12,6 +12,8 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "Masukkan kode unikmu dan lihat hadiah apa yang kamu dapatkan." },
       { property: "og:title", content: "Cek Kode Unik — Lucky Draw" },
       { property: "og:description", content: "Masukkan kode unikmu dan lihat hadiah apa yang kamu dapatkan." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: Index,

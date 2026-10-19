@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { Lock, Shuffle, RotateCcw, Trash2, LogOut, Loader2 } from "lucide-react";
-import { adminLogin, adminOverview, adminAddCodes, adminDeleteCode, adminSetDate, adminDraw } from "@/lib/draw.functions";
+import { Lock, Shuffle, RotateCcw, Trash2, LogOut, Loader2, ListPlus } from "lucide-react";
+import { adminLogin, adminOverview, adminAddCodes, adminDeleteCode, adminSetDate, adminDraw, adminFillWLCodes } from "@/lib/draw.functions";
 import { Shell, PRIZE_LABEL } from "@/components/Shell";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -12,6 +13,8 @@ export const Route = createFileRoute("/admin")({
       { name: "description", content: "Kelola kode unik dan undian harian." },
       { property: "og:title", content: "Admin — Lucky Draw" },
       { property: "og:description", content: "Kelola kode unik dan undian harian." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: Admin,
@@ -58,18 +61,27 @@ function Dashboard({ pass, onLogout }: { pass: string; onLogout: () => void }) {
   const del = useServerFn(adminDeleteCode);
   const setDate = useServerFn(adminSetDate);
   const draw = useServerFn(adminDraw);
+  const fill = useServerFn(adminFillWLCodes);
   const [data, setData] = useState<Overview | null>(null);
   const [day, setDay] = useState(1);
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
+  const [notice, setNotice] = useState("");
+  const [error, setError] = useState("");
 
   const load = useCallback(async () => setData(await overview({ data: { pass } })), [pass, overview]);
   useEffect(() => { load().catch(onLogout); }, [load]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const run = async (fn: () => Promise<unknown>) => { setBusy(true); try { await fn(); await load(); } finally { setBusy(false); } };
+  const run = async (fn: () => Promise<unknown>) => {
+    setBusy(true); setError(""); setNotice("");
+    try { await fn(); await load(); }
+    catch (e) { setError(e instanceof Error ? e.message : "Gagal menyimpan. Silakan coba lagi."); }
+    finally { setBusy(false); }
+  };
 
   if (!data) return <Shell><Loader2 className="mx-auto mt-40 h-8 w-8 animate-spin text-primary" /></Shell>;
-  const d = data.days.find((x) => x.day_number === day)!;
+  const d = data.days.find((x) => x.day_number === day);
+  if (!d) return <Shell><p>Hari undian belum tersedia.</p></Shell>;
   const codes = data.codes.filter((c) => c.day_number === day);
   const order = ["cash", "goodybag", "merch", "zonk"];
   const sorted = d.drawn_at ? [...codes].sort((a, b) => order.indexOf(a.prize ?? "zonk") - order.indexOf(b.prize ?? "zonk")) : codes;
@@ -81,6 +93,16 @@ function Dashboard({ pass, onLogout }: { pass: string; onLogout: () => void }) {
         <button onClick={onLogout} className="flex items-center gap-1 text-sm text-muted-foreground"><LogOut className="h-4 w-4" /> Keluar</button>
       </header>
       <p className="mt-1 text-sm text-muted-foreground">Total kode: <b className="text-foreground">{data.codes.length}</b> / 160</p>
+      <Button disabled={busy} className="mt-4 h-auto w-full whitespace-normal py-3 font-bold"
+        onClick={() => run(async () => {
+          const result = await fill({ data: { pass } });
+          setNotice(`${result.total} kode WL tersimpan · 40 kode per hari.`);
+        })}>
+        {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <ListPlus className="h-4 w-4" />}
+        Isi Otomatis 160 Kode WL
+      </Button>
+      {notice && <p role="status" className="mt-2 text-sm text-primary">{notice}</p>}
+      {error && <p role="alert" className="mt-2 text-sm text-destructive">{error}</p>}
 
       <div className="mt-6 grid grid-cols-4 gap-2">
         {data.days.map((x) => {
@@ -98,7 +120,7 @@ function Dashboard({ pass, onLogout }: { pass: string; onLogout: () => void }) {
 
       <section className="mt-5 rounded-3xl border border-border bg-card p-4">
         <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Tanggal pengumuman</label>
-        <input type="date" value={d.announce_date} onChange={(e) => run(() => setDate({ data: { pass, day, date: e.target.value } }))}
+        <input type="date" aria-label={`Tanggal pengumuman Hari ${day}`} disabled={busy} value={d.announce_date} onChange={(e) => { const date = e.target.value; if (date) run(() => setDate({ data: { pass, day, date } })); }}
           className="mt-2 w-full rounded-xl border border-input bg-background px-3 py-3 [color-scheme:dark]" />
         <p className="mt-2 text-xs text-muted-foreground">Sebelum tanggal ini, pengecek kode akan melihat info "hasil berlaku mulai tanggal ini".</p>
       </section>
