@@ -1,0 +1,3 @@
+- [ ] Import the supplied 160 WL codes, 40 per day.
+- [ ] Add repeatable admin fill button and retain editable announcement dates.
+- [ ] Test code allocation and verify admin fill and public check.
