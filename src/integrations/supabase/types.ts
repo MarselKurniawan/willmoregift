@@ -14,7 +14,53 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      codes: {
+        Row: {
+          code: string
+          created_at: string
+          day_number: number
+          prize: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          day_number: number
+          prize?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          day_number?: number
+          prize?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "codes_day_number_fkey"
+            columns: ["day_number"]
+            isOneToOne: false
+            referencedRelation: "draw_days"
+            referencedColumns: ["day_number"]
+          },
+        ]
+      }
+      draw_days: {
+        Row: {
+          announce_date: string
+          day_number: number
+          drawn_at: string | null
+        }
+        Insert: {
+          announce_date: string
+          day_number: number
+          drawn_at?: string | null
+        }
+        Update: {
+          announce_date?: string
+          day_number?: number
+          drawn_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
