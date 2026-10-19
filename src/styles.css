@@ -139,9 +139,29 @@
   box-shadow: var(--grand-text-shadow);
 }
 .grand-emblem {
-  display: grid; place-items: center; width: 100px; height: 100px; margin: 28px auto 20px;
-  color: var(--grand-gold); border: 1px solid var(--grand-gold); border-radius: 50%;
-  box-shadow: var(--grand-shadow); animation: grand-crown 1.2s ease-out both;
+  position: relative;
+  display: grid; place-items: center; width: 116px; height: 116px; margin: 28px auto 20px;
+  color: oklch(0.22 0.05 85);
+  border: 1px solid oklch(0.97 0.08 99 / 0.8); border-radius: 50%;
+  background: radial-gradient(circle at 50% 30%, oklch(0.97 0.1 100), var(--grand-gold) 62%, oklch(0.68 0.13 78) 100%);
+  box-shadow: 0 0 46px oklch(0.89 0.18 98 / 0.55), 0 0 110px oklch(0.89 0.18 98 / 0.28), inset 0 -8px 20px oklch(0.45 0.09 78 / 0.55), inset 0 4px 10px oklch(0.98 0.05 100 / 0.8);
+  animation: grand-crown 1.2s ease-out both, grand-emblem-glow 2.6s ease-in-out 1.3s infinite alternate;
+}
+.grand-emblem::before,
+.grand-emblem::after {
+  content: ""; position: absolute; inset: -12px; border-radius: 50%;
+  border: 1px solid oklch(0.89 0.18 98 / 0.55);
+  animation: grand-emblem-pulse 2.8s ease-out infinite;
+  pointer-events: none;
+}
+.grand-emblem::after { animation-delay: 1.4s; }
+@keyframes grand-emblem-glow {
+  from { box-shadow: 0 0 46px oklch(0.89 0.18 98 / 0.55), 0 0 110px oklch(0.89 0.18 98 / 0.28), inset 0 -8px 20px oklch(0.45 0.09 78 / 0.55), inset 0 4px 10px oklch(0.98 0.05 100 / 0.8); }
+  to { box-shadow: 0 0 70px oklch(0.89 0.18 98 / 0.8), 0 0 150px oklch(0.89 0.18 98 / 0.4), inset 0 -8px 20px oklch(0.45 0.09 78 / 0.55), inset 0 4px 10px oklch(0.98 0.05 100 / 0.8); }
+}
+@keyframes grand-emblem-pulse {
+  from { transform: scale(0.92); opacity: 0.8; }
+  to { transform: scale(1.28); opacity: 0; }
 }
 .grand-heading { margin: 0; letter-spacing: 0; }
 .grand-congratulations { display: block; color: var(--foreground); font-size: 30px; font-weight: 800; }
@@ -172,6 +192,6 @@
 @keyframes grand-crown { from { opacity: 0; transform: scale(.4) rotate(-20deg); } to { opacity: 1; transform: scale(1) rotate(0); } }
 @keyframes grand-confetti-fall { from { transform: translateY(0) rotate(0); opacity: 1; } to { transform: translateY(650px) rotate(620deg); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) {
-  .grand-prize, .grand-emblem { animation: none; }
+  .grand-prize, .grand-emblem, .grand-emblem::before, .grand-emblem::after { animation: none; }
   .grand-confetti { display: none; }
 }

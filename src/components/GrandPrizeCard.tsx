@@ -8,7 +8,7 @@ export function GrandPrizeCard() {
       </div>
       <div className="grand-content">
         <div className="grand-badge"><Sparkles className="h-3.5 w-3.5" /> GRAND PRIZE / HADIAH SPESIAL</div>
-        <div className="grand-emblem" aria-hidden="true"><Crown className="h-16 w-16" strokeWidth={1.3} /></div>
+        <div className="grand-emblem" aria-hidden="true"><Crown className="h-14 w-14" fill="currentColor" strokeWidth={1.4} /></div>
         <h2 className="grand-heading">
           <span className="grand-congratulations">SELAMAT!</span>
           <span className="grand-intro">KAMU MEMENANGKAN HADIAH UTAMA:</span>
