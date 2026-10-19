@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { Gift, Sparkles, Clock, XCircle, Frown, ArrowRight, Loader2 } from "lucide-react";
@@ -49,13 +49,9 @@ function Index() {
           </span>
           Willmore<span className="text-primary">Gift</span>
         </div>
-        <span className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">4 Hari · 40 Hadiah</span>
       </header>
 
       <section className="mt-12">
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/15 px-3 py-1 text-xs font-semibold text-primary">
-          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" /> Live sekarang
-        </span>
         <h1 className="mt-4 text-[2.6rem] font-extrabold leading-[1.02] tracking-tight">
           Cek kode unikmu, <span className="text-primary">menang</span> apa hari ini?
         </h1>
@@ -80,9 +76,6 @@ function Index() {
 
       {res && <ResultCard res={res} />}
 
-      <footer className="mt-12 text-center text-xs text-muted-foreground">
-        <Link to="/admin" className="hover:text-primary">Admin</Link>
-      </footer>
     </Shell>
   );
 }
