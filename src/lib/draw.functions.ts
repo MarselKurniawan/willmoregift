@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { DEFAULT_DRAW_DAYS, WL_CODE_ROWS } from "@/lib/wl-codes";
+import { getCodeResult } from "@/lib/draw-result";
 
 const ADMIN_CODES = ["willmore", "aaaa"];
 export const PRIZES = { cash: 1, goodybag: 5, merch: 4 } as const;
@@ -10,9 +11,6 @@ function assertAdmin(pass: string) {
 async function admin() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   return supabaseAdmin;
-}
-function todayWIB() {
-  return new Date(Date.now() + 7 * 3600 * 1000).toISOString().slice(0, 10);
 }
 const norm = (c: string) => c.trim().toUpperCase();
 
@@ -25,16 +23,7 @@ export const checkCode = createServerFn({ method: "POST" })
       .select("code, prize, day_number, draw_days(announce_date, drawn_at)")
       .eq("code", norm(data.code))
       .maybeSingle();
-    if (!row) return { status: "invalid" as const };
-    const day = row.draw_days as unknown as { announce_date: string; drawn_at: string | null };
-    if (!day.drawn_at || todayWIB() < day.announce_date || !row.prize)
-      return { status: "pending" as const, announceDate: day.announce_date, day: row.day_number };
-    return {
-      status: row.prize === "zonk" ? ("zonk" as const) : ("win" as const),
-      prize: row.prize,
-      announceDate: day.announce_date,
-      day: row.day_number,
-    };
+    return getCodeResult(row);
   });
 
 export const adminLogin = createServerFn({ method: "POST" })

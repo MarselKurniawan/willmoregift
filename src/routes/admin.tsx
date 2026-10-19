@@ -9,9 +9,9 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
-      { title: "Admin — Lucky Draw" },
+      { title: "Admin — Willmore Gift" },
       { name: "description", content: "Kelola kode unik dan undian harian." },
-      { property: "og:title", content: "Admin — Lucky Draw" },
+      { property: "og:title", content: "Admin — Willmore Gift" },
       { property: "og:description", content: "Kelola kode unik dan undian harian." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -122,7 +122,6 @@ function Dashboard({ pass, onLogout }: { pass: string; onLogout: () => void }) {
         <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Tanggal pengumuman</label>
         <input type="date" aria-label={`Tanggal pengumuman Hari ${day}`} disabled={busy} value={d.announce_date} onChange={(e) => { const date = e.target.value; if (date) run(() => setDate({ data: { pass, day, date } })); }}
           className="mt-2 w-full rounded-xl border border-input bg-background px-3 py-3 [color-scheme:dark]" />
-        <p className="mt-2 text-xs text-muted-foreground">Sebelum tanggal ini, pengecek kode akan melihat info "hasil berlaku mulai tanggal ini".</p>
       </section>
 
       <section className="mt-4 rounded-3xl border border-border bg-card p-4">
